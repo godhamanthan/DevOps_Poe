@@ -15,9 +15,29 @@ pipeline {
       }
     }
 
+    stage('Docker Build') {
+      steps {
+        script {
+          docker.build('my-image:latest')
+        }
+      }
+    }
+
+    stage('Docker Deploy') {
+      steps {
+        script {
+          docker.withRegistry('https://your-docker-registry.com', 'credentials-id') {
+            docker.image('my-image:latest').push()
+          }
+        }
+      }
+    }
+
     stage('Run') {
       steps {
-        sh 'python HelloWorld.py'
+        script {
+          docker.image('my-image:latest').run()
+        }
       }
     }
   }
